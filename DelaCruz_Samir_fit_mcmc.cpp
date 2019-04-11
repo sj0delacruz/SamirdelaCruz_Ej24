@@ -10,17 +10,19 @@ using namespace std;
 int leerArchivo(string nombreArchivo, double* &z);
 float f(double* c, int gradoPoli, float x_obs);
 float logProbabilidad(double* c, int gradoPoli);
-void MCMC_polinominal(int n_pasos);
+void MCMC_polinominal(int n_pasos, int gradoPoli);
 
 double* x = NULL;
 double* y = NULL;
 int n_xy;
 
 int main(){
+  long double t=214.232424531253624345362;
+  cout << t;
   n_xy=leerArchivo("valores_x.txt", x);
   n_xy=leerArchivo("valores_y.txt", y);
   srand48(time(0));
-  MCMC_polinominal(1000000);
+  MCMC_polinominal(1000000,3);
   
   return 0;
 }
@@ -35,28 +37,32 @@ float f(double* c, int gradoPoli, float x_obs){
 float logProbabilidad(double* c, int gradoPoli){
   float logprobabilidad=0;
   for (int i=0;i<n_xy;i++){
-    logprobabilidad+=-pow(y[i]-f(c, gradoPoli, x[i]), 2);
+    logprobabilidad+=-0.5*pow(y[i]-f(c, gradoPoli, x[i]), 2);
   }
   return logprobabilidad;
 }
-void MCMC_polinominal(int n_pasos){
+void MCMC_polinominal(int n_pasos, int gradoPoli){
   float dp=0.1;
   float alpha,r;
-  double* antPaso=new double[4];
+  double* antPaso=new double[gradoPoli+1];
   for (int j=0;j<n_pasos;j++){
-    double* sigPaso=new double[4];
-    for (int k=0;k<4;k++){
+    double* sigPaso=new double[gradoPoli+1];
+    for (int k=0;k<gradoPoli+1;k++){
       sigPaso[k]=antPaso[k] + 2*(drand48()-0.5)*dp;
     }
     alpha=drand48();
     r=exp(logProbabilidad(sigPaso,3)-logProbabilidad(antPaso,3));
     if (r>1){
-      r=1;      
+      r=1;
     }
     if (alpha<r){
       antPaso=sigPaso;
     }
-    cout << antPaso[0] << " " << antPaso[1] << " " << antPaso[2] << " " << antPaso[3] << endl;
+    cout << antPaso[0];
+    for (int k=1;k<gradoPoli+1;k++){
+      cout << " " << antPaso[k];
+    }
+    cout << endl;
   }
 }
 
