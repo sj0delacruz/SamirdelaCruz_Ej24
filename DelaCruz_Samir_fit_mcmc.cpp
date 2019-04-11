@@ -17,8 +17,6 @@ double* y = NULL;
 int n_xy;
 
 int main(){
-  long double t=214.232424531253624345362;
-  cout << t;
   n_xy=leerArchivo("valores_x.txt", x);
   n_xy=leerArchivo("valores_y.txt", y);
   srand48(time(0));
